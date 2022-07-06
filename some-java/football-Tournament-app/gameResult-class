@@ -1,0 +1,46 @@
+public class Spielergebnis {
+    private String heim;
+    private String auswaerts;
+    private String ausgangSpiel;
+    private int toreHeim;
+    private int toreAuswaerts;
+
+    public Spielergebnis(String heim, String auswaerts) {
+        this.heim = heim;
+        this.auswaerts = auswaerts;
+
+    }
+    public String getHeim() {
+        return heim;
+    }
+
+    public String getAuswaerts() {
+        return auswaerts;
+    }
+    public int getToreHeim() {
+        return toreHeim;
+    }
+    public int getToreAuswaerts() {
+        return toreAuswaerts;
+    }
+
+    public String getAusgangSpiel() {
+        return ausgangSpiel;
+    }
+
+    public void setToreHeim(int anzahlToreHeim){
+        this.toreHeim = anzahlToreHeim;
+    }
+    public void setToreAuswaerts(int anzahlToreAuswaerts){
+        this.toreAuswaerts = anzahlToreAuswaerts;
+    }
+    public void setAusgangSpiel(String ausgangSpiel){
+        this.ausgangSpiel = ausgangSpiel;
+    }
+
+    public void ergebnisseEintragen(int anzahlToreHeim, int anzahlToreAuswaerts, String ausgangSpiel){
+        this.toreHeim = anzahlToreHeim;
+        this.toreAuswaerts = anzahlToreAuswaerts;
+        this.ausgangSpiel = ausgangSpiel;
+    }
+}

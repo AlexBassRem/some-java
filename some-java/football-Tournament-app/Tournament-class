@@ -1,0 +1,458 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class Turnier {
+
+    private String nameTurnier;
+    private String turnierOrt;
+    private int anzahlMannschaften;
+    private Mannschaft teilnehmer[];
+    private Spielergebnis ergebnisse[];
+    private Spielpaarung spielpaarungen[];
+    private int teilnehmerNextFree;
+    private int ergebnisseNextFree;
+    private int spielpaarungNextFree;
+
+    public Turnier(String nameTurnier, String turnierOrt, int anzahlMannschaften) {
+        this.nameTurnier = nameTurnier;
+        this.turnierOrt = turnierOrt;
+        this.anzahlMannschaften = anzahlMannschaften;
+        teilnehmer = new Mannschaft[anzahlMannschaften - 1];
+        this.teilnehmerNextFree = 0;
+
+    }
+
+
+    public String getNameTurnier() {
+        return nameTurnier;
+    }
+
+    public String getTurnierOrt() {
+        return turnierOrt;
+    }
+
+    public int getAnzahlMannschaften() {
+        return anzahlMannschaften;
+    }
+
+    private boolean funVerfuegbarkeitMannschaftsname(String name) {
+
+        String nameTeam;
+        boolean frei = true;
+        if (teilnehmerNextFree > 0){
+            for (int i = 0; i < teilnehmerNextFree; i++) {
+
+                nameTeam = teilnehmer[i].getMannschaftsName();
+
+                if (nameTeam.equals(name)) {
+                    frei = false;
+                }
+            }
+        }
+        return frei;
+    }
+
+    public void funMannschaftHinzufuegen() {
+        int i = teilnehmerNextFree +1;
+        boolean exit = false;
+        do {
+            System.out.println("Funktion auswaehlen:");
+            System.out.println("1. Eine Mannschaft hinzufuegen.");
+            System.out.println("2. Einfügen der Mannschaften beenden.");
+            Scanner scan = new Scanner(System.in);
+            int choice = scan.nextInt();
+            switch (choice) {
+                case 1:
+                    if (funIsFull(teilnehmerNextFree, teilnehmer.length)) {
+                        System.out.print("Das Turnier ist bereits voll!");
+                        System.out.println("");
+                    } else {
+                        System.out.println("Geben sie den Namen der " + i + ". Mannschaft ein.");
+                        Scanner scan2 = new Scanner(System.in);
+                        String teamName = scan2.nextLine();
+                        if(funVerfuegbarkeitMannschaftsname(teamName)) {
+                            teilnehmer[teilnehmerNextFree] = new Mannschaft(teamName);
+                            System.out.println("Die Mannschaft " + this.teilnehmer[teilnehmerNextFree].getMannschaftsName() + " wurde hinzugefuegt.");
+                            System.out.println("");
+                            this.teilnehmerNextFree++;
+                            i++;
+                        }
+                        else{
+                            System.out.print("Name bereits vergeben.");
+                            System.out.println("");
+                        }
+                    }
+                    break;
+
+                case 2:
+                    exit = true;
+                    break;
+                default: System.out.println("Auswahl nicht verfügbar.");
+
+            }
+        } while (!exit);
+    }
+
+
+    private boolean funIsFull(int nextFree, int laenge) {
+        return nextFree >= laenge;
+    }
+
+    private boolean funIsEmpty(int nextFree) {
+        return nextFree == 0;
+    }
+
+    public void funArraysAnlegen(){
+
+        if(teilnehmerNextFree >1) {
+            spielpaarungen = new Spielpaarung[(teilnehmerNextFree) * (teilnehmerNextFree -1)];
+            this.spielpaarungNextFree = 0;
+
+            ergebnisse = new Spielergebnis[spielpaarungen.length];
+            this.ergebnisseNextFree = 0;
+
+        }else {
+            System.out.println("Nicht genug Mannschaften vorhanden.");
+
+        }
+
+    }
+
+    public void funGeneriereSpielpaarungHinrunde() {
+        if (teilnehmerNextFree >1) {
+            if (funIsFull(spielpaarungNextFree, spielpaarungen.length)) {
+                System.out.print("Die Spielpaarungen sind bereits ausgelost!");
+                System.out.println("");
+            } else {
+                for (int i = 0; i < teilnehmerNextFree; i++) {
+                    for (int j = i + 1; j < teilnehmerNextFree; j++) {
+                        spielpaarungen[spielpaarungNextFree] = new Spielpaarung(teilnehmer[i].getMannschaftsName(), teilnehmer[j].getMannschaftsName());
+                        spielpaarungNextFree++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void funGeneriereSpielpaarungRueckrunde() {
+        if (teilnehmerNextFree>1) {
+
+            if (funIsFull(spielpaarungNextFree, spielpaarungen.length)) {
+                System.out.print("Die Spielpaarungen sind bereits ausgelost!");
+                System.out.println("");
+            } else {
+                for (int i = teilnehmerNextFree - 1; i >= 0; i--) {
+                    for (int j = i - 1; j >= 0; j--) {
+                        spielpaarungen[spielpaarungNextFree] = new Spielpaarung(teilnehmer[i].getMannschaftsName(), teilnehmer[j].getMannschaftsName());
+                        this.spielpaarungNextFree++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void funMenueSpieleGenerieren(){
+        boolean exit = false;
+        do {
+            System.out.println("Funktion auswaehlen:");
+            System.out.println("1. Ergebnisse manuell eintragen.");
+            System.out.println("2. Ergebnisse automatisch generieren.");
+            System.out.println("3. Ergebnisse in Tabelle eintragen.");
+            System.out.println("4. Beenden.");
+            Scanner scan = new Scanner(System.in);
+            int choice = scan.nextInt();
+            switch (choice) {
+                case 1:
+                        funErgebnisseManuellEingeben();
+                        funErgebnisseAusgeben();
+                    break;
+                case 2:
+                        funGeneriereSpiele();
+                        funErgebnisseAusgeben();
+                    break;
+                case 3:
+                    funResetTabelle();
+                    funInTabelleEintragen();
+                    funTabelleAusgeben();
+                    break;
+                case 4:
+
+                    exit = true;
+
+                    break;
+                default: System.out.println("Auswahl nicht verfügbar.");
+
+            }
+        } while (!exit);
+
+    }
+
+    public void funErgebnisseManuellEingeben(){
+        int zaehler = ergebnisseNextFree;
+        boolean exit = false;
+        String heim;
+        String auswaerts;
+        String ergebnisSpiel;
+        do {
+            System.out.println("Funktion auswaehlen:");
+            System.out.println("1. Ergebnisse manuell eintragen.");
+            System.out.println("2. Beenden.");
+            Scanner scan = new Scanner(System.in);
+            int choice = scan.nextInt();
+            switch (choice) {
+                case 1:
+                     if (funIsEmpty(teilnehmerNextFree)) {
+                        System.out.println("Noch keine teilnehmer hinzugefügt");
+                        System.out.println("");
+                    } else if (funIsEmpty(spielpaarungNextFree)) {
+                         System.out.println("Noch keine spielpaarungen vorhanden");
+                         System.out.println("");
+                    } else {
+                        if(zaehler == spielpaarungNextFree){
+                            System.out.print("Bereits alle Spielergebnisse eingetragen!");
+                            System.out.println("");
+                        }
+                        else{
+                        heim = spielpaarungen[zaehler].getHeim();
+                        auswaerts = spielpaarungen[zaehler].getAuswaerts();
+                        System.out.println("Geben Sie die Tore für " + heim + " ein.");
+                        Scanner scanHeim = new Scanner(System.in);
+                        int toreHeim = scanHeim.nextInt();
+                        System.out.println("Geben Sie die Tore für " + auswaerts + " ein.");
+                        Scanner scanAuswaerts = new Scanner(System.in);
+                        int toreAuswaerts = scanAuswaerts.nextInt();
+
+                        if (toreHeim > toreAuswaerts) {
+                            ergebnisSpiel = "Sieg " + heim;
+                        } else if (toreHeim < toreAuswaerts) {
+                            ergebnisSpiel = "Sieg " + auswaerts;
+                        } else {
+                            ergebnisSpiel = "Unentschieden";
+                        }
+                        ergebnisse[ergebnisseNextFree] = new Spielergebnis(heim, auswaerts);
+                        ergebnisse[ergebnisseNextFree].ergebnisseEintragen(toreHeim, toreAuswaerts, ergebnisSpiel);
+                        ergebnisseNextFree++;
+                        zaehler++;
+
+                    }
+                    }
+                    break;
+                case 2:
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Auswahl nicht verfügbar.");
+                    System.out.println("");
+            }
+        } while (!exit);
+
+    }
+
+    public void funGeneriereSpiele() {
+        Random tore = new Random();
+        String ErgebnisSpiel;
+        int ToreHeim;
+        int ToreAuswaerts;
+        if (funIsFull(ergebnisseNextFree, ergebnisse.length)) {
+            System.out.print("Die Spielergebnisse sind bereits eingetragen!");
+            System.out.println("");
+        }
+        if (funIsEmpty(teilnehmerNextFree)) {
+            System.out.println("Noch keine Teilnehmer hinzugefügt");
+            System.out.println("");
+        } else if (funIsEmpty(spielpaarungNextFree)) {
+            System.out.println("Noch keine Spielpaarungen vorhanden");
+            System.out.println("");
+        }
+        else{
+
+            for (int i = ergebnisseNextFree; i < spielpaarungNextFree; i++) {
+                String Heim = spielpaarungen[i].getHeim();
+                String Auswaerts = spielpaarungen[i].getAuswaerts();
+                ToreHeim = tore.nextInt(5);
+                ToreAuswaerts = tore.nextInt(5);
+
+                if (ToreHeim > ToreAuswaerts) {
+                    ErgebnisSpiel = "Sieg " + Heim;
+                } else if (ToreHeim < ToreAuswaerts) {
+                    ErgebnisSpiel = "Sieg " + Auswaerts;
+                } else {
+                    ErgebnisSpiel = " Unentschieden";
+                }
+                ergebnisse[ergebnisseNextFree] = new Spielergebnis(Heim, Auswaerts);
+                ergebnisse[ergebnisseNextFree].ergebnisseEintragen(ToreHeim, ToreAuswaerts, ErgebnisSpiel);
+                ergebnisseNextFree++;
+            }
+        }
+    }
+
+    public void funInTabelleEintragen() {
+        for (int i = 0; i < ergebnisseNextFree; i++) {
+            int heim = 0;
+            int auswaerts = 0;
+
+           /* int vergeben = 0;
+
+
+                if(funIsEmpty(teilnehmerNextFree)) {
+
+                    System.out.println("Noch keine Teilnehmer hinzugefügt");
+                }
+                else if (funIsEmpty(spielpaarungNextFree)){
+
+                    System.out.println("Noch keine Spielpaarungen vorhanden");
+                }
+                else if (funIsEmpty(ergebnisseNextFree)){
+
+                    System.out.println("Noch keine Ergebnisse vorhanden");
+                }
+                else {
+                    do{
+                         if (teilnehmer[heim].getMannschaftsName() == ergebnisse[i].getHeim()) {
+                                 vergeben = 1;
+                             }
+                         else{
+                                heim++;
+                               }
+                     }while(vergeben == 0 );
+
+                     vergeben = 0;
+
+                    do{
+                         if (teilnehmer[auswaerts].getMannschaftsName() == ergebnisse[i].getAuswaerts()) {
+                             vergeben = 1;
+                             }
+                         else{
+                             auswaerts++;
+                            }
+                    }while(vergeben == 0 );*/
+
+            if (funIsEmpty(teilnehmerNextFree)) {
+                System.out.println("Noch keine Teilnehmer hinzugefügt");
+                System.out.println("");
+            } else if (funIsEmpty(spielpaarungNextFree)) {
+                System.out.println("Noch keine Spielpaarungen vorhanden");
+                System.out.println("");
+            } else if (funIsEmpty(ergebnisseNextFree)) {
+                System.out.println("Noch keine Ergebnisse vorhanden");
+                System.out.println("");
+            } else {
+                for (int j = 0; j < teilnehmerNextFree; j++) {
+
+                    if (teilnehmer[j].getMannschaftsName() == ergebnisse[i].getHeim()) {
+                        heim = j;
+                    }
+                }
+
+                for (int k = 0; k < teilnehmerNextFree; k++) {
+
+                    if (teilnehmer[k].getMannschaftsName() == ergebnisse[i].getAuswaerts()) {
+                        auswaerts = k;
+                    }
+                }
+
+                int toreHeim = ergebnisse[i].getToreHeim();
+                int toreAuswaerts = ergebnisse[i].getToreAuswaerts();
+
+
+                if (toreHeim > toreAuswaerts) {
+                    teilnehmer[heim].funSieg(toreHeim, toreAuswaerts);
+                    teilnehmer[auswaerts].funNiederlage(toreAuswaerts, toreHeim);
+
+                } else if (toreHeim < toreAuswaerts) {
+                    teilnehmer[auswaerts].funSieg(toreAuswaerts, toreHeim);
+                    teilnehmer[heim].funNiederlage(toreHeim, toreAuswaerts);
+                } else {
+                    teilnehmer[heim].funUnentschieden(toreHeim, toreAuswaerts);
+                    teilnehmer[auswaerts].funUnentschieden(toreAuswaerts, toreHeim);
+                }
+            }
+        }
+    }
+
+    public void funResetTabelle(){
+        for (int i = 0; i< teilnehmerNextFree; i++){
+            teilnehmer[i].funReset();
+        }
+    }
+    /* Liste wird sortiert*/
+    public void funSortieren() {
+        int getauscht = 0;
+        Mannschaft temp;
+        do {
+            getauscht = 0;
+            for (int i = 0; i < teilnehmerNextFree - 1; i++) {
+
+                if (teilnehmer[i].getPunkte() < teilnehmer[i + 1].getPunkte()) {
+                    temp = teilnehmer[i + 1];
+                    teilnehmer[i + 1] = teilnehmer[i];
+                    teilnehmer[i] = temp;
+                    getauscht = 1;
+                } else if (teilnehmer[i].getPunkte() == teilnehmer[i + 1].getPunkte()) {
+                    if (teilnehmer[i].getTordifferenz() < teilnehmer[i + 1].getTordifferenz()) {
+                        temp = teilnehmer[i + 1];
+                        teilnehmer[i + 1] = teilnehmer[i];
+                        teilnehmer[i] = temp;
+                        getauscht = 1;
+                    }
+                }
+            }
+        }
+        while (getauscht == 1);
+        System.out.print("Tabelle wurde sortiert.");
+        System.out.println("");
+    }
+
+    public void funTabelleAusgeben() {
+        if (funIsEmpty(teilnehmerNextFree)) {
+            System.out.print("Turnier hat keine Teilnehmer.");
+            System.out.println("");
+        } else {
+            final Object[][] table = new String[teilnehmerNextFree +1][];
+            table[0] = new String[] {"Platz","Mannschaft","Spiele","Siege","Unentschieden","Niederlagen","Tore","Gegentore","Tordifferenz","Punkte","Punkteschnitt"};
+           for (int i = 0; i < this.teilnehmerNextFree; i++){
+                table[i + 1] = new String[]{Integer.toString(i + 1), this.teilnehmer[i].getMannschaftsName(), Integer.toString(this.teilnehmer[i].getSpiele()), Integer.toString(this.teilnehmer[i].getSiege()), Integer.toString(this.teilnehmer[i].getUnentschieden()), Integer.toString(this.teilnehmer[i].getNiederlagen()), Integer.toString(this.teilnehmer[i].getTore()), Integer.toString(this.teilnehmer[i].getGegentore()), Integer.toString(this.teilnehmer[i].getTordifferenz()), Integer.toString(this.teilnehmer[i].getPunkte()), Double.toString(this.teilnehmer[i].getPunkteschnitt())};
+            }
+           for(final Object [] row: table){
+               System.out.format("%5s\t%10s\t%6s\t%5s\t%13s\t%11s\t\t%4s\t%9s\t%12s\t%6s\t%13s%n",row);
+           }
+        }
+
+        System.out.println("");
+    }
+
+    public void funSpielpaarungenAusgeben() {
+        if (funIsEmpty(spielpaarungNextFree)) {
+            System.out.print("Spielpaarungen stehen noch nicht fest.");
+            System.out.println("");
+        } else {
+            final Object[][] table = new String[spielpaarungNextFree + 1][];
+            table[0] = new String[]{"Spielpaarung", "Heim-Mannschaft","    ", "Auswaerts-Mannschaft"};
+            for (int i = 0; i < this.spielpaarungNextFree; i++) {
+                table[i + 1] = new String[]{Integer.toString(i + 1), this.spielpaarungen[i].getHeim(),"v.s.", this.spielpaarungen[i].getAuswaerts()};
+            }
+            for (final Object[] row : table) {
+                System.out.format("%12s\t%15s\t\t%4s\t%20s%n", row);
+            }
+        }
+        System.out.println("");
+    }
+
+    public void funErgebnisseAusgeben() {
+        if (funIsEmpty(ergebnisseNextFree)) {
+            System.out.print("Es gibt noch keine Spielergebnisse.");
+            System.out.println("");
+        } else {
+            final Object[][] table = new String[ergebnisseNextFree + 1][];
+            table[0] = new String[]{"Spiel", "Heim-Mannschaft","Tore Heim-Mannschaft","    ","Auswaerts-Mannschaft","Tore Ausswaerts-Mannschaft", "Ausgang des Spiels"};
+            for (int i = 0; i < this.ergebnisseNextFree; i++) {
+                table[i + 1] = new String[]{Integer.toString(i + 1), this.ergebnisse[i].getHeim(), Integer.toString(this.ergebnisse[i].getToreHeim()),"v.s.",this.ergebnisse[i].getAuswaerts(), Integer.toString(this.ergebnisse[i].getToreAuswaerts()),this.ergebnisse[i].getAusgangSpiel()};
+            }
+            for (final Object[] row : table) {
+                System.out.format("%5s\t%15s\t\t%20s\t%4s\t%20s\t%26s\t%18s%n", row);
+            }
+        }
+        System.out.println("");
+    }
+}
+

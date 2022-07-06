@@ -1,0 +1,147 @@
+
+public class Mannschaft {
+    private String mannschaftsName;
+    private int spiele;
+    private int siege;
+    private int unentschieden;
+    private int niederlagen;
+    private int tore;
+    private int gegentore;
+    private int tordifferenz;
+    private int punkte;
+    private double punkteschnitt;
+
+    public Mannschaft(String mannschaftsName) {
+        this.mannschaftsName = mannschaftsName;
+        this.spiele = 0;
+        this.siege = 0;
+        this.unentschieden = 0;
+        this.niederlagen = 0;
+        this.tore = 0;
+        this.gegentore = 0;
+        this.tordifferenz = 0;
+        this.punkte = 0;
+        this.punkteschnitt = 0.0;
+    }
+
+    //Getter
+    public String getMannschaftsName() {
+        return mannschaftsName;
+    }
+
+    public int getSpiele() {
+        return spiele;
+    }
+
+    public int getSiege() {
+        return siege;
+    }
+
+    public int getUnentschieden() {
+        return unentschieden;
+    }
+
+    public int getNiederlagen() {
+        return niederlagen;
+    }
+
+    public int getTore() {
+        return tore;
+    }
+
+    public int getGegentore() {
+        return gegentore;
+    }
+
+    public int getTordifferenz() {
+        return tordifferenz;
+    }
+
+    public int getPunkte() {
+        return punkte;
+    }
+
+    public double getPunkteschnitt() {
+        return punkteschnitt;
+    }
+
+    // Setter
+    public void setMannschaftsName(String mannschaftsNameNeu) {
+        this.mannschaftsName = mannschaftsNameNeu;
+    }
+
+    public void setSpiele(int spieleNeu) {
+        this.spiele += spieleNeu;
+    }
+
+    public void setSiege(int siegeNeu) {
+        this.siege += siegeNeu;
+    }
+
+    public void setUnentschieden(int unentschiedenNeu) {
+        this.unentschieden += unentschiedenNeu;
+    }
+    public void setNiederlagen(int niederlagenNeu) {
+        this.niederlagen += niederlagenNeu;
+    }
+
+    public void setTore(int toreNeu) {
+        this.tore += toreNeu;
+    }
+
+    public void setGegentore(int gegentoreNeu) {
+        this.gegentore += gegentoreNeu;
+    }
+
+    public void setPunkte(int punkteNeu) {
+        this.punkte += punkteNeu;
+    }
+
+    public void setTordifferenz() {
+        this.tordifferenz = this.tore - this.gegentore;
+    }
+
+    public void setPunkteschnitt() {
+        this.punkteschnitt = this.punkte / this.spiele;
+    }
+
+    public void funSieg(int torePlus, int gegentorePlus) {
+        this.setSpiele(1);
+        this.setTore(torePlus);
+        this.setGegentore(gegentorePlus);
+        this.setPunkte(3);
+        this.setSiege(1);
+        this.setTordifferenz();
+        this.setPunkteschnitt();
+    }
+
+    public void funNiederlage(int torePlus, int gegentorePlus) {
+        this.setSpiele(1);
+        this.setTore(torePlus);
+        this.setGegentore(gegentorePlus);
+        this.setNiederlagen(1);
+        this.setTordifferenz();
+        this.setPunkteschnitt();
+    }
+
+    public void funUnentschieden(int torePlus, int gegentorePlus) {
+        this.setSpiele(1);
+        this.setTore(torePlus);
+        this.setGegentore(gegentorePlus);
+        this.setPunkte(1);
+        this.setUnentschieden(1);
+        this.setTordifferenz();
+        this.setPunkteschnitt();
+    }
+    public void funReset(){
+        this.spiele = 0;
+        this.siege = 0;
+        this.unentschieden = 0;
+        this.niederlagen = 0;
+        this.tore = 0;
+        this.gegentore = 0;
+        this.tordifferenz = 0;
+        this.punkte = 0;
+        this.punkteschnitt = 0.0;
+    }
+}

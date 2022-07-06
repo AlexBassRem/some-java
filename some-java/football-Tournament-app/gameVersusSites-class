@@ -1,0 +1,18 @@
+public class Spielpaarung {
+
+    private String heim;
+    private String auswaerts;
+
+    public Spielpaarung(String heim, String auswaerts) {
+        this.heim = heim;
+        this.auswaerts = auswaerts;
+    }
+
+    public String getHeim() {
+        return heim;
+    }
+
+    public String getAuswaerts() {
+        return auswaerts;
+    }
+}

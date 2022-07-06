@@ -1,0 +1,53 @@
+
+import java.util.Scanner;
+
+public class App {
+
+    public static void main(String[] args) {
+
+        Mannschaft MannschaftA = new Mannschaft("Mannschaft A");
+        Mannschaft MannschaftB = new Mannschaft("Mannschaft B");
+        Mannschaft MannschaftC = new Mannschaft("Mannschaft C");
+        Turnier weturnier = new Turnier("Wochenendsturnier", "Frankfurt", 8);
+
+        System.out.println("Willkommen beim Turnierassistenten!");
+        boolean exit = false;
+        do {
+            System.out.println("Funktion auswaehlen:");
+            System.out.println("1. Mannschaft hinzufuegen.");
+            System.out.println("2. Spielpaarungen generieren.");
+            System.out.println("3. Spielergebnisse eintragen.");
+            System.out.println("4. Ergebnisse ausgeben.");
+            System.out.println("5. Beenden.");
+            Scanner scan = new Scanner(System.in);
+            int choice = scan.nextInt();
+            switch (choice) {
+                case 1:
+                    weturnier.funMannschaftHinzufuegen();
+                    break;
+                case 2:
+                    weturnier.funArraysAnlegen();
+                    weturnier.funGeneriereSpielpaarungHinrunde();
+                    weturnier.funGeneriereSpielpaarungRueckrunde();
+                    weturnier.funSpielpaarungenAusgeben();
+                    System.out.println("");
+                    break;
+                case 3:
+                    weturnier.funMenueSpieleGenerieren();
+                    System.out.println("");
+                    break;
+                case 4:
+                    weturnier.funTabelleAusgeben();
+                    System.out.println("");
+                    weturnier.funSortieren();
+                    System.out.println("");
+                    weturnier.funTabelleAusgeben();
+                    System.out.println("");
+                    break;
+                case 5:
+                    exit = true;
+                    break;
+            }
+        } while (!exit);
+    }
+}
